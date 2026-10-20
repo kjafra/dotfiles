@@ -252,6 +252,12 @@ do
     fi
 done
 
+# --- starship: prompt (GitHub Dark High Contrast, see .config/starship.toml)
+# Kept after zsh-syntax-highlighting so it doesn't interfere with plugins.
+if [[ -o interactive ]] && command -v starship >/dev/null 2>&1; then
+    eval "$(starship init zsh)"
+fi
+
 # --- eza: prettier `ls` --------------------------------------------------
 if command -v eza >/dev/null 2>&1; then
     alias ls='eza --icons --group-directories-first'

@@ -1,0 +1,71 @@
+# Starship prompt, tuned to the GitHub Dark High Contrast palette used by
+# WezTerm and Helix. Requires a Nerd Font (pinned in wezterm.lua).
+"$schema" = 'https://starship.rs/config-schema.json'
+
+palette = "github_dark_high_contrast"
+
+format = """
+$username$custom$directory$git_branch$git_status$nodejs$dotnet$cmd_duration
+$character"""
+
+add_newline = true
+
+[palettes.github_dark_high_contrast]
+fg = "#f0f3f6"
+muted = "#4c5461"
+red = "#ff9492"
+green = "#26cd4d"
+yellow = "#f0b72f"
+blue = "#71b7ff"
+purple = "#cb9eff"
+cyan = "#39c5cf"
+
+# Home: house icon via home_symbol. Root: icon from [custom.root] below.
+[directory]
+style = "bold blue"
+home_symbol = " ~"
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " 󰌾"
+read_only_style = "red"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+# Prefixes the directory with a yellow icon when the cwd is exactly "/".
+[custom.root]
+when = '[ "$PWD" = "/" ]'
+command = "printf ''"
+symbol = " "
+style = "bold yellow"
+format = "[$symbol]($style)"
+shell = ["bash", "--noprofile", "--norc"]
+
+[username]
+show_always = false
+style_root = "bold red"
+format = "[$user]($style_root) "
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold yellow"
+format = "([$all_status$ahead_behind]($style) )"
+
+[nodejs]
+style = "green"
+format = "[$symbol($version)]($style) "
+
+[dotnet]
+style = "cyan"
+format = "[$symbol($version)]($style) "
+
+[cmd_duration]
+min_time = 2000
+style = "muted"
+format = "[took $duration]($style)"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
