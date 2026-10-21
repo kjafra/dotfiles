@@ -295,5 +295,10 @@ dotfiles() {
         echo "dotfiles: only these subcommands are allowed: ${(j:, :)allowed}" >&2
         return 1
     fi
-    git --git-dir="$HOME/.dotfiles.git" --work-tree="$HOME" "$@"
+    git --git-dir="$HOME/.dotfiles.git" --work-tree="$HOME" "$@" || return
+    # Re-apply the sparse list (.sparse/ubuntu) in case the pull changed it.
+    if [[ $1 == (pull|merge) ]]; then
+        git --git-dir="$HOME/.dotfiles.git" --work-tree="$HOME" show HEAD:.sparse/ubuntu |
+            git --git-dir="$HOME/.dotfiles.git" --work-tree="$HOME" sparse-checkout set --no-cone --stdin
+    fi
 }

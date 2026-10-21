@@ -12,5 +12,11 @@ function dotfiles {
         Write-Error "dotfiles: only these subcommands are allowed: $($allowed -join ', ')"
         return
     }
-    git --git-dir="$env:USERPROFILE\.dotfiles.git" --work-tree="$env:USERPROFILE" @args
+    $dfArgs = "--git-dir=$env:USERPROFILE\.dotfiles.git", "--work-tree=$env:USERPROFILE"
+    git @dfArgs @args
+    if ($LASTEXITCODE -ne 0) { return }
+    # Re-apply the sparse list (.sparse/windows) in case the pull changed it.
+    if ($args[0] -in 'pull', 'merge') {
+        git @dfArgs show HEAD:.sparse/windows | git @dfArgs sparse-checkout set --no-cone --stdin
+    }
 }

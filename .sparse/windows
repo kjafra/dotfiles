@@ -1,0 +1,9 @@
+/.config/wezterm/
+/AppData/
+/Documents/PowerShell/
+/.git-hooks/
+/.gitconfig
+/.gitattributes
+/.gitattributes_global
+/.gitignore
+/.gitconfig.local.example

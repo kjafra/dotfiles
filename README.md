@@ -16,6 +16,15 @@ Personal Windows dotfiles, managed as a [bare Git repository](https://www.atlass
    ```
 3. The PowerShell 7 profile (`Documents\PowerShell\Microsoft.PowerShell_profile.ps1`) is tracked and provides a `dotfiles` helper locked down to pull/sync subcommands only (`pull`, `fetch`, `merge`, `status`, `log`, `diff`) — see the TIP below for why. WSL-Setup's `Install-Dotfiles.ps1` automates steps 1–2.
 
+## Per-OS sparse checkout
+
+This repo is shared by Windows and Ubuntu (WSL); each checkout only materialises its own files via git sparse-checkout (non-cone), driven by lists stored here:
+
+- `.sparse/windows` — **allowlist**: only these paths reach `%USERPROFILE%`. A new Windows tool needs one line added.
+- `.sparse/ubuntu` — **denylist**: everything except the Windows-only paths (`.config/wezterm/`, `AppData/`, `Documents/`) and repo docs. A new Linux tool config (e.g. `.config/k9s/`) lands automatically.
+
+The installers apply the list for their OS, and the `dotfiles` helper re-applies it after `pull`/`merge`. Don't forget: a file that needs to exist on both sides must match both lists.
+
 ## What's in here
 
 This repo mirrors real paths under your home directory and tracks configuration files for the tools installed on this machine (terminal, editor, shell profile, etc.). Each top-level folder corresponds to where that tool expects its config on Windows (e.g. `.config\`, `AppData\Roaming\`, `Documents\`). Check the folder/file itself for details — this list is intentionally not exhaustive so it doesn't need to be kept in sync every time a config changes.
