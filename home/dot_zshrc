@@ -1,5 +1,5 @@
-# Linux shell config, checked out to $HOME/.zshrc by the dotfiles bare-repo
-# workflow (see README.md). Mirrors the Windows PowerShell profile's
+# Linux shell config, deployed to $HOME/.zshrc by chezmoi
+# (see README.md). Mirrors the Windows PowerShell profile's
 # feature set: fzf-powered Ctrl+R history search, ghost-text history
 # autosuggestions, and the same locked-down `dotfiles` sync helper.
 
@@ -284,21 +284,20 @@ if command -v yazi >/dev/null 2>&1; then
 fi
 
 # --- dotfiles sync helper -------------------------------------------------
-# Intentionally locked down to read-only / sync operations, mirroring the
-# PowerShell profile's `dotfiles` function. It exists purely to pull
-# changes made elsewhere (e.g. by an AI agent in a separate clone) into
-# this home directory checkout - never to author or push changes directly
-# from here. Use a plain clone of the repo for that.
+# chezmoi wrapper, intentionally locked down to sync/inspect operations,
+# mirroring the PowerShell profile's `dotfiles` function. The chezmoi source
+# clone (~/.local/share/chezmoi) is only ever pulled into; author changes in
+# a separate normal clone of kjafra/dotfiles, push, then:
+#   dotfiles pull && dotfiles diff && dotfiles apply
 dotfiles() {
-    local allowed=(pull fetch merge status log diff)
+    local allowed=(pull diff apply status verify managed doctor)
     if (( $# == 0 )) || [[ -z "${allowed[(r)$1]}" ]]; then
         echo "dotfiles: only these subcommands are allowed: ${(j:, :)allowed}" >&2
         return 1
     fi
-    git --git-dir="$HOME/.dotfiles.git" --work-tree="$HOME" "$@" || return
-    # Re-apply the sparse list (.sparse/ubuntu) in case the pull changed it.
-    if [[ $1 == (pull|merge) ]]; then
-        git --git-dir="$HOME/.dotfiles.git" --work-tree="$HOME" show HEAD:.sparse/ubuntu |
-            git --git-dir="$HOME/.dotfiles.git" --work-tree="$HOME" sparse-checkout set --no-cone --stdin
+    if [[ $1 == pull ]]; then
+        chezmoi git -- pull --ff-only
+    else
+        chezmoi "$@"
     fi
 }

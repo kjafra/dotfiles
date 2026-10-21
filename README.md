@@ -1,40 +1,32 @@
 # dotfiles
 
-Personal Windows dotfiles, managed as a [bare Git repository](https://www.atlassian.com/git/tutorials/dotfiles) checked out directly into `$env:USERPROFILE` (your home directory). No symlinks, no extra tooling — just Git.
+Personal dotfiles for Windows (PowerShell/WezTerm) and Ubuntu on WSL, managed with [chezmoi](https://www.chezmoi.io/). One repo serves both OSes; the live home directory is never a git work tree — chezmoi keeps its own clone of this repo in a separate source directory and *copies* files into the home directory.
+
+## Layout
+
+- `.chezmoiroot` points at `home/`; everything outside it (this README, LICENSE, `.gitattributes`, `.gitignore`) is repo-only and never deployed.
+- `home/` uses chezmoi naming: `dot_zshrc` → `~/.zshrc`, `dot_config/helix/` → `~/.config/helix/`, `executable_commit-msg` → executable `commit-msg`. Windows-only paths (`AppData/`, `Documents/PowerShell/`, `dot_config/wezterm/`) sit alongside.
+- `home/.chezmoiignore` decides what each OS receives:
+  - **Windows**: allowlist. Only the listed paths are applied, so Linux configs never reach `%USERPROFILE%`. A new Windows tool needs one line.
+  - **Linux/WSL**: denylist. Everything except the Windows-only paths is applied, so a new Linux tool config (e.g. `home/dot_config/k9s/`) lands automatically.
+- `~/.gitconfig.local` (identity, credential helpers) is machine-specific and **not** managed; copy it from `~/.gitconfig.local.example`.
 
 ## Setup on a new machine
 
-1. Clone this repo as a **bare** repo into your home directory:
-   ```powershell
-   git clone --bare https://github.com/kjafra/dotfiles.git $env:USERPROFILE\.dotfiles.git
-   ```
-2. Do the one-time setup (hide untracked files, then check out into your home directory) using raw `git` invocations with the same `--git-dir`/`--work-tree` flags. Back up any conflicting existing files first:
-   ```powershell
-   $gitDir = "$env:USERPROFILE\.dotfiles.git"
-   git --git-dir=$gitDir --work-tree=$env:USERPROFILE config --local status.showUntrackedFiles no
-   git --git-dir=$gitDir --work-tree=$env:USERPROFILE checkout
-   ```
-3. The PowerShell 7 profile (`Documents\PowerShell\Microsoft.PowerShell_profile.ps1`) is tracked and provides a `dotfiles` helper locked down to pull/sync subcommands only (`pull`, `fetch`, `merge`, `status`, `log`, `diff`) — see the TIP below for why. WSL-Setup's `Install-Dotfiles.ps1` automates steps 1–2.
+Use WSL-Setup's `Install-Dotfiles.ps1` (Windows) or Ubuntu-Setup's `install-dotfiles.sh` (Ubuntu). Manually:
 
-## Per-OS sparse checkout
+```sh
+chezmoi init kjafra/dotfiles   # clones into ~/.local/share/chezmoi
+chezmoi diff                   # review
+chezmoi apply
+```
 
-This repo is shared by Windows and Ubuntu (WSL); each checkout only materialises its own files via git sparse-checkout (non-cone), driven by lists stored here:
+## Working with an AI coding agent
 
-- `.sparse/windows` — **allowlist**: only these paths reach `%USERPROFILE%`. A new Windows tool needs one line added.
-- `.sparse/ubuntu` — **denylist**: everything except the Windows-only paths (`.config/wezterm/`, `AppData/`, `Documents/`) and repo docs. A new Linux tool config (e.g. `.config/k9s/`) lands automatically.
+The chezmoi source directory is only ever pulled into. Author changes in a separate normal clone (e.g. `~/src/dotfiles` or `Desktop\Github\dotfiles`), push, then in the home directory:
 
-The installers apply the list for their OS, and the `dotfiles` helper re-applies it after `pull`/`merge`. Don't forget: a file that needs to exist on both sides must match both lists.
+```sh
+dotfiles pull && dotfiles diff && dotfiles apply
+```
 
-## What's in here
-
-This repo mirrors real paths under your home directory and tracks configuration files for the tools installed on this machine (terminal, editor, shell profile, etc.). Each top-level folder corresponds to where that tool expects its config on Windows (e.g. `.config\`, `AppData\Roaming\`, `Documents\`). Check the folder/file itself for details — this list is intentionally not exhaustive so it doesn't need to be kept in sync every time a config changes.
-
-## TIP: Working with an AI coding agent
-
-Don't point an agent at your live home directory checkout. Instead:
-
-1. Clone this repo normally (not bare) into a separate working subdirectory, e.g. `Desktop\dotfiles`.
-2. Let the agent make and commit changes there, then push to the remote.
-3. Back in your home directory, run `dotfiles pull` (or `fetch` + `merge`) to sync those changes in.
-
-The `dotfiles` command itself (PowerShell profile on Windows, `.zshrc` in WSL) is restricted to `pull`/`fetch`/`merge`/`status`/`log`/`diff` — it will refuse `add`, `commit`, `push`, etc. It exists solely to **pull/sync** changes into your home directory, never to author or commit changes directly there.
+The `dotfiles` function (PowerShell profile, `.zshrc`) is a restricted chezmoi wrapper: `pull`, `diff`, `apply`, `status`, `verify`, `managed`, `doctor`. It refuses `add`, `edit`, `re-add`, `forget`, etc.

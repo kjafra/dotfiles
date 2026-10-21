@@ -3,8 +3,8 @@
 # DevOps organization name(s) (e.g. the "contoso" in
 # https://dev.azure.com/contoso).
 #
-# This file is NOT deployed by install-dotfiles.sh's bare-repo checkout
-# and is never committed - it's read directly from $HOME by
+# The copy you create at $HOME/.azure-devops.local is NOT managed by
+# chezmoi and is never committed - it's read directly from $HOME by
 # scripts/install-azure-devops-mcp.sh, the same way .gitconfig.local is
 # read directly by git itself. Lines starting with # and blank lines are
 # ignored.

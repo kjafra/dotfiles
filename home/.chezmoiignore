@@ -1,0 +1,25 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Windows: allowlist. Everything is ignored except the paths below, so Linux
+# configs never leak into %USERPROFILE%. A new Windows tool needs a line here.
+*
+.config/*
+!.config
+!.config/wezterm
+!.config/wezterm/**
+!AppData
+!AppData/**
+!Documents
+!Documents/PowerShell
+!Documents/PowerShell/**
+!.git-hooks
+!.git-hooks/**
+!.gitconfig
+!.gitattributes_global
+!.gitconfig.local.example
+{{- else -}}
+# Linux/WSL: denylist. Everything is deployed except the Windows-only paths,
+# so a new Linux tool config (e.g. .config/k9s) lands without any edit here.
+AppData
+Documents
+.config/wezterm
+{{- end }}
