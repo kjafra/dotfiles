@@ -10,6 +10,10 @@ $character"""
 
 add_newline = true
 
+# /mnt/c (9P/DrvFs) directory scans are slow under WSL; give them more time.
+scan_timeout = 1000
+command_timeout = 1000
+
 [palettes.github_dark_high_contrast]
 fg = "#f0f3f6"
 muted = "#4c5461"
