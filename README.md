@@ -11,6 +11,10 @@ Personal dotfiles for Windows (PowerShell/WezTerm) and Ubuntu on WSL, managed wi
   - **Linux/WSL**: denylist. Everything except the Windows-only paths is applied, so a new Linux tool config (e.g. `home/dot_config/k9s/`) lands automatically.
 - `~/.gitconfig.local` (identity, credential helpers) is machine-specific and **not** managed; copy it from `~/.gitconfig.local.example`.
 
+## Terminal multiplexing
+
+WezTerm (Windows) is only the terminal window: its tab bar is hidden and its default tab/pane/split/copy-mode/search/scrollback keys are disabled (`home/dot_config/wezterm/wezterm.lua`). Panes, tabs and workspaces come from tmux (`home/dot_config/tmux/`) or herdr (`home/dot_config/herdr/config.toml`, which also shows a clock in its tab row). Both use `Ctrl+b` as prefix, so inside herdr press it twice to send it to tmux.
+
 ## Setup on a new machine
 
 Use WSL-Setup's `Install-Dotfiles.ps1` (Windows) or Ubuntu-Setup's `install-dotfiles.sh` (Ubuntu). Manually:

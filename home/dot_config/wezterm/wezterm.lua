@@ -43,13 +43,10 @@ config.font_size = 11
 config.window_decorations = "RESIZE"
 config.window_close_confirmation = "AlwaysPrompt"
 config.scrollback_lines = 3000
-config.default_workspace = "main"
 
--- Dim inactive panes
-config.inactive_pane_hsb = {
-  saturation = 0.24,
-  brightness = 0.5
-}
+-- tmux/herdr own tabs, panes, workspaces and the status line, so WezTerm's
+-- tab bar is hidden entirely.
+config.enable_tab_bar = false
 
 -- Copy selected text straight to the system clipboard (in addition to the
 -- primary selection) as soon as the mouse button is released.
@@ -61,21 +58,69 @@ config.mouse_bindings = {
 
 -- Keys
 -- Leaning on WezTerm's default keybindings (no custom LEADER prefix); see
--- https://wezterm.org/config/default-keys.html for the full list. Tab
--- keybindings (new/close/switch tab, etc.) are kept as-is - useful as an
--- extra layer on top of tmux, and verified not to collide with tmux's own
--- keymap (tmux's root/no-prefix table is mouse-bindings-only, and its
--- prefix-table Ctrl+Arrow resize-pane bindings require the Ctrl+b prefix
--- first, so they never fire on a bare keypress).
+-- https://wezterm.org/config/default-keys.html for the full list.
 --
--- Pane/split keybindings are disabled below, though: tmux is already the
--- single source of truth for multiplexing (panes, splits), so WezTerm's
--- own pane/split defaults would just be redundant/confusing (nested
--- splits, two different "add a pane" gestures, etc.). Each entry below
--- undoes exactly one default assignment (see
--- https://wezterm.org/config/lua/keyassignment/DisableDefaultAssignment.html)
--- and lets the keypress fall through to tmux/the shell instead.
+-- Everything that duplicates tmux/herdr (tabs, panes, splits, copy mode,
+-- search, scrollback, launcher) is disabled below, so those keypresses fall
+-- through to tmux/herdr/the shell instead. Each entry undoes exactly one
+-- default assignment (see
+-- https://wezterm.org/config/lua/keyassignment/DisableDefaultAssignment.html).
+-- Kept: clipboard, font size, fullscreen, new window, reload, palette, debug.
 config.keys = {
+  -- Tabs (herdr tabs / tmux windows)
+  { key = "t", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- SpawnTab
+  { key = "T", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- SpawnTab
+  { key = "w", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- CloseCurrentTab
+  { key = "W", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- CloseCurrentTab
+  { key = "Tab", mods = "CTRL", action = act.DisableDefaultAssignment }, -- ActivateTabRelative +1
+  { key = "Tab", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ActivateTabRelative -1
+  { key = "PageUp", mods = "CTRL", action = act.DisableDefaultAssignment }, -- ActivateTabRelative -1
+  { key = "PageDown", mods = "CTRL", action = act.DisableDefaultAssignment }, -- ActivateTabRelative +1
+  { key = "PageUp", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- MoveTabRelative -1
+  { key = "PageDown", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- MoveTabRelative +1
+  { key = "1", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ActivateTab
+  { key = "2", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "3", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "4", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "5", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "6", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "7", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "8", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "9", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "!", mods = "CTRL", action = act.DisableDefaultAssignment }, -- ActivateTab via shifted digit (Shift is implicit)
+  { key = "@", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "#", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "$", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "%", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "^", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "&", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "*", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "(", mods = "CTRL", action = act.DisableDefaultAssignment },
+  { key = "!", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "@", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "#", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "$", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "%", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "^", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "&", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "*", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+  { key = "(", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
+
+  -- Copy mode, search, quick select (herdr/tmux copy mode covers these)
+  { key = "x", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ActivateCopyMode
+  { key = "X", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ActivateCopyMode
+  { key = "f", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- Search
+  { key = "F", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- Search
+  { key = "Space", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- QuickSelect
+
+  -- Scrollback (herdr/tmux keep their own scrollback)
+  { key = "PageUp", mods = "SHIFT", action = act.DisableDefaultAssignment }, -- ScrollByPage -1
+  { key = "PageDown", mods = "SHIFT", action = act.DisableDefaultAssignment }, -- ScrollByPage +1
+  { key = "k", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ClearScrollback
+  { key = "K", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ClearScrollback
+
+  -- Panes and splits
+
   { key = "\"", mods = "CTRL|ALT", action = act.DisableDefaultAssignment }, -- SplitVertical
   { key = "\"", mods = "CTRL|SHIFT|ALT", action = act.DisableDefaultAssignment }, -- SplitVertical
   { key = "'", mods = "CTRL|ALT", action = act.DisableDefaultAssignment }, -- SplitVertical (raw apostrophe key)
@@ -94,108 +139,5 @@ config.keys = {
   { key = "DownArrow", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ActivatePaneDirection Down
   { key = "Z", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- TogglePaneZoomState
 }
-
--- Tab bar
--- I don't like the look of "fancy" tab bar
-config.use_fancy_tab_bar = false
-config.status_update_interval = 1000
-config.tab_bar_at_bottom = false
-config.tab_max_width = 32
-
--- Colors for the retro tab bar, tuned to sit apart from the GitHub high-contrast
--- pane background so tabs read as distinct "chips" rather than blending in.
-config.colors = {
-  tab_bar = {
-    background = "#010409",
-    new_tab = { bg_color = "#010409", fg_color = "#9ea7b3" },
-    new_tab_hover = { bg_color = "#272b33", fg_color = "#f0f3f6" },
-  },
-}
-
--- Powerline-style separators between tabs, with the active tab rendered in
--- bold to make it visually distinct without needing the fancy tab bar.
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-  local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
-  local title = tab.tab_index + 1 .. ": " .. (tab.active_pane.title or "")
-  if #title > max_width - 4 then
-    title = title:sub(1, max_width - 5) .. "…"
-  end
-
-  if tab.is_active then
-    return {
-      { Background = { Color = "#010409" } },
-      { Foreground = { Color = "#71b7ff" } },
-      { Text = SOLID_LEFT_ARROW },
-      { Background = { Color = "#71b7ff" } },
-      { Foreground = { Color = "#010409" } },
-      { Attribute = { Intensity = "Bold" } },
-      { Text = " " .. title .. " " },
-    }
-  end
-
-  return {
-    { Background = { Color = "#010409" } },
-    { Foreground = { Color = "#4c5461" } },
-    { Text = SOLID_LEFT_ARROW },
-    { Background = { Color = "#272b33" } },
-    { Foreground = { Color = "#d9dee3" } },
-    { Text = " " .. title .. " " },
-  }
-end)
-
-wezterm.on("update-status", function(window, pane)
-  -- Workspace name
-  local stat = window:active_workspace()
-  local stat_color = "#ff9492"
-
-  local basename = function(s)
-    -- Nothing a little regex can't fix
-    return string.gsub(s, "(.*[/\\])(.*)", "%2")
-  end
-
-  -- Current working directory
-  local cwd = pane:get_current_working_dir()
-  if cwd then
-    if type(cwd) == "userdata" then
-      -- Wezterm introduced the URL object in 20240127-113634-bbcac864
-      cwd = basename(cwd.file_path)
-    else
-      -- 20230712-072601-f4abf8fd or earlier version
-      cwd = basename(cwd)
-    end
-  else
-    cwd = ""
-  end
-
-  -- Current command
-  local cmd = pane:get_foreground_process_name()
-  -- CWD and CMD could be nil (e.g. viewing log using Ctrl-Alt-l)
-  cmd = cmd and basename(cmd) or ""
-
-  -- Time
-  local time = wezterm.strftime("%H:%M")
-
-  -- Left status (left of the tab line)
-  window:set_left_status(wezterm.format({
-    { Foreground = { Color = stat_color } },
-    { Text = "  " },
-    { Text = wezterm.nerdfonts.oct_table .. "  " .. stat },
-    { Text = " |" },
-  }))
-
-  -- Right status
-  window:set_right_status(wezterm.format({
-    -- Wezterm has a built-in nerd fonts
-    -- https://wezfurlong.org/wezterm/config/lua/wezterm/nerdfonts.html
-    { Text = wezterm.nerdfonts.md_folder .. "  " .. cwd },
-    { Text = " | " },
-    { Foreground = { Color = "#f0b72f" } },
-    { Text = wezterm.nerdfonts.fa_code .. "  " .. cmd },
-    "ResetAttributes",
-    { Text = " | " },
-    { Text = wezterm.nerdfonts.md_clock .. "  " .. time },
-    { Text = "  " },
-  }))
-end)
 
 return config
