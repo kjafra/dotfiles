@@ -13,7 +13,7 @@ Personal dotfiles for Windows (PowerShell/WezTerm) and Ubuntu on WSL, managed wi
 
 ## Terminal multiplexing
 
-WezTerm (Windows) is only the terminal window: its tab bar is hidden and its default tab/pane/split/copy-mode/search/scrollback keys are disabled (`home/dot_config/wezterm/wezterm.lua`). Panes, tabs and workspaces come from tmux (`home/dot_config/tmux/`) or herdr (`home/dot_config/herdr/config.toml`, which also shows a clock in its tab row). Both use `Ctrl+b` as prefix, so inside herdr press it twice to send it to tmux.
+WezTerm (Windows) is only the terminal window: its tab bar is hidden and its default tab/pane/split/copy-mode/search/scrollback keys are disabled (`home/dot_config/wezterm/wezterm.lua`). Panes, tabs and workspaces come from herdr (`home/dot_config/herdr/config.toml`, which also shows a clock in its tab row).
 
 ## Setup on a new machine
 

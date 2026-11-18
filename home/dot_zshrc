@@ -118,8 +118,7 @@ __print_login_banner() {
 }
 
 # --- Login banner: print once per interactive shell ----------------------
-# tmux is installed but not auto-started - run it manually (`tmux`) when
-# you want it. Skipped for non-interactive contexts (scp, VS Code remote
+# Skipped for non-interactive contexts (scp, VS Code remote
 # exec, etc.).
 if [[ -o interactive ]]; then
     __print_login_banner
@@ -162,9 +161,7 @@ unfunction __export_nuget_feed_endpoints 2>/dev/null
 # escape sequence for Ctrl+Left/Right that zsh doesn't bind to anything by
 # default, so it gets inserted into the prompt as literal text instead of
 # moving the cursor a word at a time. Covers the handful of encodings
-# actually seen in practice (tmux's `xterm-keys on`, set in tmux.conf,
-# ensures the first/most common form below reaches zsh unmangled even
-# through tmux).
+# actually seen in practice (the first/most common form is below).
 bindkey '^[[1;5C' forward-word
 bindkey '^[[1;5D' backward-word
 bindkey '^[[5C'   forward-word

@@ -36,7 +36,7 @@ config.color_schemes = {
 config.color_scheme = "GitHub Dark High Contrast"
 
 -- Pinned explicitly (rather than relying on WezTerm's built-in fallback
--- font) for consistently crisp rendering of Nerd Font glyphs (tmux status
+-- font) for consistently crisp rendering of Nerd Font glyphs (herdr status
 -- icons, eza/shell prompt icons, etc.) instead of the fallback.
 config.font = wezterm.font("JetBrainsMono Nerd Font Mono")
 config.font_size = 11
@@ -44,7 +44,7 @@ config.window_decorations = "RESIZE"
 config.window_close_confirmation = "AlwaysPrompt"
 config.scrollback_lines = 3000
 
--- tmux/herdr own tabs, panes, workspaces and the status line, so WezTerm's
+-- herdr owns tabs, panes, workspaces and the status line, so WezTerm's
 -- tab bar is hidden entirely.
 config.enable_tab_bar = false
 
@@ -60,14 +60,14 @@ config.mouse_bindings = {
 -- Leaning on WezTerm's default keybindings (no custom LEADER prefix); see
 -- https://wezterm.org/config/default-keys.html for the full list.
 --
--- Everything that duplicates tmux/herdr (tabs, panes, splits, copy mode,
+-- Everything that duplicates herdr (tabs, panes, splits, copy mode,
 -- search, scrollback, launcher) is disabled below, so those keypresses fall
--- through to tmux/herdr/the shell instead. Each entry undoes exactly one
+-- through to herdr/the shell instead. Each entry undoes exactly one
 -- default assignment (see
 -- https://wezterm.org/config/lua/keyassignment/DisableDefaultAssignment.html).
 -- Kept: clipboard, font size, fullscreen, new window, reload, palette, debug.
 config.keys = {
-  -- Tabs (herdr tabs / tmux windows)
+  -- Tabs (herdr tabs)
   { key = "t", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- SpawnTab
   { key = "T", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- SpawnTab
   { key = "w", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- CloseCurrentTab
@@ -106,14 +106,14 @@ config.keys = {
   { key = "*", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
   { key = "(", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
 
-  -- Copy mode, search, quick select (herdr/tmux copy mode covers these)
+  -- Copy mode, search, quick select (herdr copy mode covers these)
   { key = "x", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ActivateCopyMode
   { key = "X", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ActivateCopyMode
   { key = "f", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- Search
   { key = "F", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- Search
   { key = "Space", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- QuickSelect
 
-  -- Scrollback (herdr/tmux keep their own scrollback)
+  -- Scrollback (herdr keeps its own scrollback)
   { key = "PageUp", mods = "SHIFT", action = act.DisableDefaultAssignment }, -- ScrollByPage -1
   { key = "PageDown", mods = "SHIFT", action = act.DisableDefaultAssignment }, -- ScrollByPage +1
   { key = "k", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment }, -- ClearScrollback
